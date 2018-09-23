@@ -1,4 +1,4 @@
-package com.yupeng.task;
+package com.yupeng.venue;
 
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
@@ -7,7 +7,7 @@ public class ServletInitializer extends SpringBootServletInitializer {
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
-		return application.sources(TaskApplication.class);
+		return application.sources(VenueApplication.class);
 	}
 
 }

@@ -5,11 +5,11 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.yupeng</groupId>
-	<artifactId>task</artifactId>
+	<artifactId>venue</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
-	<name>task</name>
+	<name>venue</name>
 	<description>Demo project for Spring Boot</description>
 
 	<parent>
