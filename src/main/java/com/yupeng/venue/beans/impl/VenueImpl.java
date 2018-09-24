@@ -10,11 +10,13 @@ import java.util.stream.Stream;
 import javax.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.annotation.JmsListener;
 import org.springframework.stereotype.Component;
 
 import com.yupeng.venue.beans.Venue;
 import com.yupeng.venue.enitities.Seat;
 import com.yupeng.venue.enums.SeatStatus;
+import com.yupeng.venue.jms.SeatsStatusUpdateJmsMessage;
 import com.yupeng.venue.repositories.VenueRepositry;
 
 @Component
@@ -85,9 +87,9 @@ public class VenueImpl implements Venue {
 					continue;
 				priorityIndex[index++] = i;
 				priorityMap[i] = weight;
-				
+
 				int rowIndex = i / column;
-				int begin =  rowIndex * column;
+				int begin = rowIndex * column;
 				int end = (rowIndex + 1) * column;
 				int move = 1;
 				while (move < 3 && i - move >= begin && priorityMap[i - move] == 0) {
@@ -131,6 +133,16 @@ public class VenueImpl implements Venue {
 			lock.readLock().unlock();
 		}
 		return cloneSeats;
+	}
+
+	@JmsListener(destination = "seatsUpdate", containerFactory = "seatsFactory")
+	public void receiveMessage(final SeatsStatusUpdateJmsMessage message) {
+		lock.writeLock().lock();
+		try {
+			message.getSeatIndexs().forEach(x -> seats[x].setStatus(message.getStatus()));
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
 
 }

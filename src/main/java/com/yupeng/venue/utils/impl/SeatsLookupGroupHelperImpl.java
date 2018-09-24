@@ -9,13 +9,13 @@ import java.util.Queue;
 import org.springframework.stereotype.Component;
 
 import com.yupeng.venue.enitities.Seat;
-import com.yupeng.venue.utils.TicketLookupGroupHelper;
+import com.yupeng.venue.utils.SeatsLookupGroupHelper;
 
 @Component
-public class TicketLookupGroupHelperImpl implements TicketLookupGroupHelper {
+public class SeatsLookupGroupHelperImpl implements SeatsLookupGroupHelper {
 
 	@Override
-	public List<Seat> findTicketsInGroup(Seat[] seats, int column, int[] priorityMap, int[] priorityIndex,
+	public List<Seat> findSeatsInGroup(Seat[] seats, int column, int[] priorityMap, int[] priorityIndex,
 			int numSeats) {
 		boolean[] visited = new boolean[seats.length];
 		PriorityQueue<PrioritySet> priorityQueue = new PriorityQueue<PrioritySet>((a, b) -> {

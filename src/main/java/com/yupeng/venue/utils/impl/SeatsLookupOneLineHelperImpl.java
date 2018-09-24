@@ -8,13 +8,13 @@ import java.util.Queue;
 import org.springframework.stereotype.Component;
 
 import com.yupeng.venue.enitities.Seat;
-import com.yupeng.venue.utils.TicketLookupOneLineHelper;
+import com.yupeng.venue.utils.SeatsLookupOneLineHelper;
 
 @Component
-public class TicketLookupOneLineHelperImpl implements TicketLookupOneLineHelper {
+public class SeatsLookupOneLineHelperImpl implements SeatsLookupOneLineHelper {
 
 	@Override
-	public List<Seat> findTicketsInOneLine(Seat[] seats, int column, int[] priorityIndex, int numSeats) {
+	public List<Seat> findSeatsInOneLine(Seat[] seats, int column, int[] priorityIndex, int numSeats) {
 		boolean[] visited = new boolean[seats.length];
 		for (int i = 0; i < priorityIndex.length; i++) {
 			if (!visited[priorityIndex[i]] && seats[priorityIndex[i]].isAvalible()) {

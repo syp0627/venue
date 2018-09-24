@@ -14,20 +14,20 @@ import com.yupeng.venue.beans.Venue;
 import com.yupeng.venue.config.AppConfig;
 import com.yupeng.venue.enitities.Seat;
 import com.yupeng.venue.enums.SeatStatus;
-import com.yupeng.venue.utils.TicketLookupHelper;
+import com.yupeng.venue.utils.SeatsLookupHelper;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = { AppConfig.class })
-public class TicketLookupHelperImplTest {
+public class SeatsLookupHelperImplTest {
 	@Autowired
-	private TicketLookupHelper ticketLookupHelper;
+	private SeatsLookupHelper ticketLookupHelper;
 
 	@Autowired
 	private Venue venue;
 
 	@Test
 	public void getGetTicketNormalCase() {
-		List<Seat> seats = ticketLookupHelper.findTickets(venue, 4);
+		List<Seat> seats = ticketLookupHelper.findSeats(venue, 4);
 		int column = venue.getColumn();
 		assertTrue(seats.size() == 4);
 		int center = venue.getCenter();
@@ -35,7 +35,7 @@ public class TicketLookupHelperImplTest {
 		venue.getSeats()[center - 1].setStatus(SeatStatus.HOLD);
 		venue.getSeats()[center + 1].setStatus(SeatStatus.HOLD);
 		venue.getSeats()[center - 2].setStatus(SeatStatus.HOLD);
-		seats = ticketLookupHelper.findTickets(venue, 6);
+		seats = ticketLookupHelper.findSeats(venue, 6);
 		venue.getSeats()[center + 2].setStatus(SeatStatus.HOLD);
 		venue.getSeats()[center + 3].setStatus(SeatStatus.HOLD);
 		venue.getSeats()[center + 4].setStatus(SeatStatus.HOLD);
@@ -43,7 +43,7 @@ public class TicketLookupHelperImplTest {
 		venue.getSeats()[center + 6].setStatus(SeatStatus.HOLD);
 		venue.getSeats()[center + 7].setStatus(SeatStatus.HOLD);
 		assertTrue(seats.size() == 6);
-		seats = ticketLookupHelper.findTickets(venue, 8);
+		seats = ticketLookupHelper.findSeats(venue, 8);
 		assertTrue(seats.size() == 8);
 		assertTrue(seats.get(0).getIndex() == center + column);
 		assertTrue(seats.get(1).getIndex() == center + column - 1);
@@ -72,7 +72,7 @@ public class TicketLookupHelperImplTest {
 		seats[177].setStatus(SeatStatus.AVAILABLE);
 		seats[174].setStatus(SeatStatus.AVAILABLE);
 
-		List<Seat> seatsList = ticketLookupHelper.findTickets(venue, 4);
+		List<Seat> seatsList = ticketLookupHelper.findSeats(venue, 4);
 
 		assertTrue(seatsList.get(0).getIndex() == 176);
 		assertTrue(seatsList.get(1).getIndex() == 175);
@@ -95,7 +95,7 @@ public class TicketLookupHelperImplTest {
 		seats[(row - 1) * column].setStatus(SeatStatus.AVAILABLE);
 		seats[seats.length - 1].setStatus(SeatStatus.AVAILABLE);
 
-		List<Seat> seatsList = ticketLookupHelper.findTickets(venue, 4);
+		List<Seat> seatsList = ticketLookupHelper.findSeats(venue, 4);
 
 		assertTrue(seatsList.get(0).getIndex() == (row - 1) * column);
 		assertTrue(seatsList.get(1).getIndex() == column);
