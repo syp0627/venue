@@ -9,11 +9,15 @@ public class SeatHold {
 	private long expired;
 	private List<Integer> seatIndexs;
 
-	public SeatHold(int seatHodeId, String customerEmail, long expired, List<Integer> seatIndexs) {
-		this.seatHodeId = seatHodeId;
+	public SeatHold(String customerEmail, long expired, List<Integer> seatIndexs) {
 		this.customerEmail = customerEmail;
 		this.expired = expired;
 		this.seatIndexs = seatIndexs;
+	}
+
+	public SeatHold(int seatHodeId, String customerEmail, long expired, List<Integer> seatIndexs) {
+		this(customerEmail, expired, seatIndexs);
+		this.seatHodeId = seatHodeId;
 	}
 
 	public long getExpired() {

@@ -68,13 +68,19 @@ public class VenueImpl implements Venue {
 		return (int) Stream.of(seats).flatMap(Stream::of).filter(s -> s.getStatus() == SeatStatus.AVAILABLE).count();
 	}
 
+	public void setVenueRepositry(VenueRepositry venueRepositry) {
+		this.venueRepositry = venueRepositry;
+	}
+
 	@PostConstruct
-	protected void init() {
-		initSeats();
+	public void init() {
+		loadSeats();
 		initPriority();
 	}
 
 	private void initPriority() {
+		this.priorityMap = new int[row * column];
+		this.priorityIndex = new int[row * column];
 		int index = 0, weight = 0;
 		Queue<Integer> queue = new LinkedList<>();
 		queue.add(getCenter());
@@ -112,13 +118,17 @@ public class VenueImpl implements Venue {
 
 	}
 
-	private void initSeats() {
-		Seat[][] oriSeats = venueRepositry.getSeats();
-		this.seats = Arrays.stream(oriSeats).flatMap(Arrays::stream).toArray(Seat[]::new);
-		this.column = oriSeats[0].length;
-		this.row = oriSeats.length;
-		this.priorityMap = new int[row * column];
-		this.priorityIndex = new int[row * column];
+	@Override
+	public void loadSeats() {
+		lock.writeLock().lock();
+		try {
+			Seat[][] oriSeats = venueRepositry.getSeats();
+			this.seats = Arrays.stream(oriSeats).flatMap(Arrays::stream).toArray(Seat[]::new);
+			this.column = oriSeats[0].length;
+			this.row = oriSeats.length;
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
 
 	@Override
@@ -136,7 +146,8 @@ public class VenueImpl implements Venue {
 	}
 
 	@JmsListener(destination = "seatsUpdate", containerFactory = "seatsFactory")
-	public void receiveMessage(final SeatsStatusUpdateJmsMessage message) {
+	@Override
+	public void updateSeatStatus(final SeatsStatusUpdateJmsMessage message) {
 		lock.writeLock().lock();
 		try {
 			message.getSeatIndexs().forEach(x -> seats[x].setStatus(message.getStatus()));

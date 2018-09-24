@@ -22,22 +22,20 @@ public class MemoryTikcetHoldRepository implements TikcetHoldRepository {
 	}
 
 	@Override
-	public SeatHold save(String customerEmail, long expired, List<Integer> seatsIndex) {
+	public SeatHold get(int seatHoldId) {
+		return seatHoldId >= this.seatholds.size() ? null : this.seatholds.get(seatHoldId);
+	}
+
+	@Override
+	public boolean save(SeatHold seatHold) {
 		lock.writeLock().lock();
-		SeatHold seatHold;
 		try {
-			int index = this.seatholds.size();
-			seatHold = new SeatHold(index, customerEmail, expired, seatsIndex);
+			seatHold.setSeatHodeId(this.seatholds.size());
 			this.seatholds.add(seatHold);
 		} finally {
 			lock.writeLock().unlock();
 		}
-		return seatHold;
-	}
-
-	@Override
-	public SeatHold get(int seatHoldId) {
-		return seatHoldId >= this.seatholds.size() ? null : this.seatholds.get(seatHoldId);
+		return true;
 	}
 
 }

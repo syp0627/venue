@@ -29,4 +29,17 @@ public class TicketLookupServiceImpl implements TicketLookupService {
 		return ticketLookupHelper.findSeats(venue, numSeats);
 	}
 
+	public void setVenue(Venue venue) {
+		this.venue = venue;
+	}
+
+	public void setTicketLookupHelper(SeatsLookupHelper ticketLookupHelper) {
+		this.ticketLookupHelper = ticketLookupHelper;
+	}
+
+	@Override
+	public void refreshCache() {
+		venue.loadSeats();
+	}
+
 }

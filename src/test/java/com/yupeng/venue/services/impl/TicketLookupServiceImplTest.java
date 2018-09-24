@@ -1,28 +1,43 @@
 package com.yupeng.venue.services.impl;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.yupeng.venue.beans.Venue;
-import com.yupeng.venue.config.AppConfig;
+import com.yupeng.venue.beans.impl.VenueImpl;
 import com.yupeng.venue.enitities.Seat;
 import com.yupeng.venue.enums.SeatStatus;
-import com.yupeng.venue.services.TicketLookupService;
+import com.yupeng.venue.repositories.VenueRepositry;
+import com.yupeng.venue.repositories.memory.MemoryVenueRepositry;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { AppConfig.class })
+@RunWith(PowerMockRunner.class)
 public class TicketLookupServiceImplTest {
 
-	@Autowired
-	private TicketLookupService ticketLookupService;
+	private TicketLookupServiceImpl ticketLookupService = new TicketLookupServiceImpl();
+	private VenueImpl venue = new VenueImpl();
+	private VenueRepositry venueRepositry = mock(MemoryVenueRepositry.class);
 
-	@Autowired
-	private Venue venue;
+	@Before
+	public void setup() throws Exception {
+		venue.setVenueRepositry(venueRepositry);
+
+		Seat[][] seats = new Seat[MemoryVenueRepositry.ROW][MemoryVenueRepositry.COLUMN];
+		for (int i = 0; i < MemoryVenueRepositry.ROW; i++) {
+			for (int j = 0; j < MemoryVenueRepositry.COLUMN; j++) {
+				seats[i][j] = new Seat(i * MemoryVenueRepositry.COLUMN + j);
+			}
+		}
+		when(venueRepositry.getSeats()).thenReturn(seats);
+		venue.init();
+
+		ticketLookupService.setVenue(venue);
+
+	}
 
 	@Test
 	public void testEmptyAvaliableSeat() {

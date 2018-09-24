@@ -14,7 +14,9 @@ import org.springframework.stereotype.Service;
 import com.yupeng.venue.enitities.Seat;
 import com.yupeng.venue.enums.SeatStatus;
 import com.yupeng.venue.exception.TicketsHoldExpiredException;
+import com.yupeng.venue.exception.TicketsHoldFailedException;
 import com.yupeng.venue.exception.TicketsHoldInfoNotValidedException;
+import com.yupeng.venue.exception.TicketsNotAvailableException;
 import com.yupeng.venue.jms.SeatsStatusUpdateJmsMessage;
 import com.yupeng.venue.models.SeatHold;
 import com.yupeng.venue.repositories.TikcetHoldRepository;
@@ -45,25 +47,48 @@ public class TicketHoldServiceImpl implements TicketHoldService {
 
 	@Override
 	public SeatHold holdSeats(int numSeats, String customerEmail) {
-		List<Seat> seats = ticketLookupService.findSeats(numSeats);
-		if (venueRepositry.holdSeats(seats)) {
-			List<Integer> seatsIndex = seats.stream().map(x -> x.getIndex()).collect(Collectors.toList());
-			Calendar calendar = Calendar.getInstance();
-			calendar.add(holdExpiredUnit, holdExpiredDuration);
-			SeatHold seatHold = tikcetHoldRepository.save(customerEmail, calendar.getTimeInMillis(), seatsIndex);
+		SeatHold seatHold = null;
+		while (seatHold == null) {
+			int seatAvailble = ticketLookupService.numSeatsAvailable();
+			if (seatAvailble < numSeats)
+				throw new TicketsNotAvailableException(String
+						.format("Number of Seats not avaliable, request : %d, available : %d", numSeats, seatAvailble));
+			List<Seat> seats = ticketLookupService.findSeats(numSeats);
+			if (venueRepositry.holdSeats(seats)) {
+				seatHold = buildSeatHold(seats, customerEmail);
 
-			// update Venue seats cache, this is just for simulate multiple servers,
-			// consider all servers will receive update notice.
-			jmsTemplate.convertAndSend("seatsUpdate",
-					new SeatsStatusUpdateJmsMessage(seatHold.getSeatIndexs(), SeatStatus.HOLD));
+				// update Venue seats cache, this is just for simulate multiple servers,
+				// consider all servers will receive update notice.
+				jmsTemplate.convertAndSend("seatsUpdate",
+						new SeatsStatusUpdateJmsMessage(seatHold.getSeatIndexs(), SeatStatus.HOLD));
 
-			// release holding seats after expired
-			Timer timer = new Timer();
-			timer.schedule(new TicketHoldReleaseTask(seatHold, jmsTemplate, venueRepositry), getHoldMilliscond());
-			timerStorage.put(seatHold.getSeatHodeId(), timer);
-			return seatHold;
+				// release holding seats after expired
+				addSeatHoldReleaseTimer(seatHold);
+				return seatHold;
+			} else {
+				ticketLookupService.refreshCache();
+			}
 		}
-		return null;
+		return seatHold;
+
+	}
+
+	protected SeatHold buildSeatHold(List<Seat> seats, String customerEmail) {
+		List<Integer> seatsIndex = seats.stream().map(x -> x.getIndex()).collect(Collectors.toList());
+		Calendar calendar = Calendar.getInstance();
+		calendar.add(holdExpiredUnit, holdExpiredDuration);
+		SeatHold seatHold = new SeatHold(customerEmail, calendar.getTimeInMillis(), seatsIndex);
+		if (tikcetHoldRepository.save(seatHold)) {
+			return seatHold;
+		} else {
+			throw new TicketsHoldFailedException(String.format("Ticket hold failed, please try again later."));
+		}
+	}
+
+	protected void addSeatHoldReleaseTimer(SeatHold seatHold) {
+		Timer timer = new Timer();
+		timer.schedule(new TicketHoldReleaseTask(seatHold, jmsTemplate, venueRepositry), getHoldMilliscond());
+		timerStorage.put(seatHold.getSeatHodeId(), timer);
 	}
 
 	@Override
@@ -73,12 +98,12 @@ public class TicketHoldServiceImpl implements TicketHoldService {
 			throw new TicketsHoldInfoNotValidedException(String
 					.format("Ticket Holding information is not valid: id: %d, email: %s ", seatHoldId, customerEmail));
 		}
-		
+
 		if (seatHold.getExpired() < Calendar.getInstance().getTimeInMillis()) {
-			throw new TicketsHoldExpiredException(String
-					.format("Ticket Holding exipred: id: %d, email: %s ", seatHoldId, customerEmail));
+			throw new TicketsHoldExpiredException(
+					String.format("Ticket Holding exipred: id: %d, email: %s ", seatHoldId, customerEmail));
 		}
-		
+
 		timerStorage.get(seatHoldId).cancel();
 		return seatHold;
 	}
@@ -108,6 +133,22 @@ public class TicketHoldServiceImpl implements TicketHoldService {
 		}
 
 		return 60 * 60 * 1000;
+	}
+
+	public void setTicketLookupService(TicketLookupService ticketLookupService) {
+		this.ticketLookupService = ticketLookupService;
+	}
+
+	public void setJmsTemplate(JmsTemplate jmsTemplate) {
+		this.jmsTemplate = jmsTemplate;
+	}
+
+	public void setVenueRepositry(VenueRepositry venueRepositry) {
+		this.venueRepositry = venueRepositry;
+	}
+
+	public void setTikcetHoldRepository(TikcetHoldRepository tikcetHoldRepository) {
+		this.tikcetHoldRepository = tikcetHoldRepository;
 	}
 
 }

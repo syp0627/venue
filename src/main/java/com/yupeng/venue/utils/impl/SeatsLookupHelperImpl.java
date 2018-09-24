@@ -23,12 +23,20 @@ public class SeatsLookupHelperImpl implements SeatsLookupHelper {
 	@Override
 	public List<Seat> findSeats(Venue venue, int numSeats) {
 		Seat[] seats = venue.cloneSeats();
-		List<Seat> ret = seatsLookupOneLineHelper.findSeatsInOneLine(seats, venue.getColumn(),
-				venue.getPriorityIndex(), numSeats);
+		List<Seat> ret = seatsLookupOneLineHelper.findSeatsInOneLine(seats, venue.getColumn(), venue.getPriorityIndex(),
+				numSeats);
 		if (ret != null)
 			return ret;
 		return seatsLookupGroupHelper.findSeatsInGroup(seats, venue.getColumn(), venue.getPriorityMap(),
 				venue.getPriorityIndex(), numSeats);
+	}
+
+	public void setSeatsLookupOneLineHelper(SeatsLookupOneLineHelper seatsLookupOneLineHelper) {
+		this.seatsLookupOneLineHelper = seatsLookupOneLineHelper;
+	}
+
+	public void setSeatsLookupGroupHelper(SeatsLookupGroupHelper seatsLookupGroupHelper) {
+		this.seatsLookupGroupHelper = seatsLookupGroupHelper;
 	}
 
 }

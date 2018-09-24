@@ -17,7 +17,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
 		return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
 
-	@ExceptionHandler(value = { TicketsReserveFailedException.class })
+	@ExceptionHandler(value = { TicketsReserveFailedException.class, TicketsHoldFailedException.class })
 	protected ResponseEntity<Object> handldInternalServerError(RuntimeException ex, WebRequest request) {
 		return handleExceptionInternal(ex, ex.getMessage(), new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR,
 				request);

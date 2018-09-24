@@ -1,23 +1,24 @@
 package com.yupeng.venue.beans.impl;
 
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.powermock.modules.junit4.PowerMockRunner;
 
-import com.yupeng.venue.beans.Venue;
-import com.yupeng.venue.config.AppConfig;
+import com.yupeng.venue.enitities.Seat;
 import com.yupeng.venue.enums.SeatStatus;
+import com.yupeng.venue.repositories.VenueRepositry;
+import com.yupeng.venue.repositories.memory.MemoryVenueRepositry;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = { AppConfig.class })
+@RunWith(PowerMockRunner.class)
 public class VenueImplTest {
 
-	@Autowired
-	private Venue venue;
+	private VenueImpl venue = new VenueImpl();
+	private VenueRepositry venueRepositry = mock(MemoryVenueRepositry.class);
 
 	private int[] targetPriority = new int[] { 13, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8, 8, 7, 7, 6, 6, 5, 6, 6, 7, 7, 8,
 			8, 9, 9, 10, 10, 11, 11, 12, 12, 13, 12, 12, 11, 11, 10, 10, 9, 9, 8, 8, 7, 7, 6, 6, 5, 5, 4, 5, 5, 6, 6, 7,
@@ -42,6 +43,20 @@ public class VenueImplTest {
 			189, 221, 253, 125, 283, 91, 57, 23, 190, 222, 254, 126, 284, 92, 58, 24, 161, 193, 225, 97, 259, 67, 37, 7,
 			160, 192, 224, 96, 258, 66, 36, 6, 191, 223, 255, 127, 285, 93, 59, 25, 286, 94, 60, 26, 257, 65, 35, 5,
 			256, 64, 34, 4, 287, 95, 61, 27, 62, 28, 33, 3, 32, 2, 63, 29, 30, 1, 0, 31 };
+
+	@Before
+	public void setup() throws Exception {
+		venue.setVenueRepositry(venueRepositry);
+
+		Seat[][] seats = new Seat[MemoryVenueRepositry.ROW][MemoryVenueRepositry.COLUMN];
+		for (int i = 0; i < MemoryVenueRepositry.ROW; i++) {
+			for (int j = 0; j < MemoryVenueRepositry.COLUMN; j++) {
+				seats[i][j] = new Seat(i * MemoryVenueRepositry.COLUMN + j);
+			}
+		}
+		when(venueRepositry.getSeats()).thenReturn(seats);
+		venue.init();
+	}
 
 	@Test
 	public void testVenueImplInit() {
