@@ -1,5 +1,6 @@
 package com.yupeng.venue.services.impl;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,17 +8,18 @@ import org.springframework.stereotype.Service;
 
 import com.yupeng.venue.beans.Venue;
 import com.yupeng.venue.enitities.Seat;
-import com.yupeng.venue.services.TicketLookupService;
+import com.yupeng.venue.models.SeatsStatus;
+import com.yupeng.venue.services.SeatsLookupService;
 import com.yupeng.venue.utils.SeatsLookupHelper;
 
 @Service
-public class TicketLookupServiceImpl implements TicketLookupService {
+public class SeatsLookupServiceImpl implements SeatsLookupService {
 
 	@Autowired
 	private Venue venue;
 
 	@Autowired
-	private SeatsLookupHelper ticketLookupHelper;
+	private SeatsLookupHelper seatsLookupHelper;
 
 	@Override
 	public int numSeatsAvailable() {
@@ -26,7 +28,7 @@ public class TicketLookupServiceImpl implements TicketLookupService {
 
 	@Override
 	public List<Seat> findSeats(int numSeats) {
-		return ticketLookupHelper.findSeats(venue, numSeats);
+		return seatsLookupHelper.findSeats(venue, numSeats);
 	}
 
 	public void setVenue(Venue venue) {
@@ -34,12 +36,17 @@ public class TicketLookupServiceImpl implements TicketLookupService {
 	}
 
 	public void setTicketLookupHelper(SeatsLookupHelper ticketLookupHelper) {
-		this.ticketLookupHelper = ticketLookupHelper;
+		this.seatsLookupHelper = ticketLookupHelper;
 	}
 
 	@Override
 	public void refreshCache() {
 		venue.loadSeats();
+	}
+
+	@Override
+	public SeatsStatus getSeatsStatus() {
+		return new SeatsStatus(venue.getRow(), venue.getColumn(), Arrays.asList(venue.getSeats()));
 	}
 
 }

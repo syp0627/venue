@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.yupeng.venue.models.SeatHold;
+import com.yupeng.venue.models.SeatsStatus;
+import com.yupeng.venue.services.SeatsLookupService;
 import com.yupeng.venue.services.TicketService;
 
 @RestController
@@ -13,6 +15,14 @@ public class TicketController {
 
 	@Autowired
 	private TicketService ticketService;
+
+	@Autowired
+	private SeatsLookupService seatsLookupService;
+
+	@GetMapping("/seatsStatus")
+	public SeatsStatus seats() {
+		return seatsLookupService.getSeatsStatus();
+	}
 
 	@GetMapping("/available")
 	public int hold() {

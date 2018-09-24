@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.yupeng.venue.models.SeatHold;
 import com.yupeng.venue.services.TicketHoldService;
-import com.yupeng.venue.services.TicketLookupService;
+import com.yupeng.venue.services.SeatsLookupService;
 import com.yupeng.venue.services.TicketReserveService;
 import com.yupeng.venue.services.TicketService;
 
@@ -13,7 +13,7 @@ import com.yupeng.venue.services.TicketService;
 public class TicketServiceImpl implements TicketService {
 
 	@Autowired
-	private TicketLookupService ticketLookupService;
+	private SeatsLookupService ticketLookupService;
 
 	@Autowired
 	private TicketHoldService ticketHoldService;

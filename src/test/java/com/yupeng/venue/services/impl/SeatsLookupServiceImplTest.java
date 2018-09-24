@@ -16,9 +16,9 @@ import com.yupeng.venue.repositories.VenueRepositry;
 import com.yupeng.venue.repositories.memory.MemoryVenueRepositry;
 
 @RunWith(PowerMockRunner.class)
-public class TicketLookupServiceImplTest {
+public class SeatsLookupServiceImplTest {
 
-	private TicketLookupServiceImpl ticketLookupService = new TicketLookupServiceImpl();
+	private SeatsLookupServiceImpl ticketLookupService = new SeatsLookupServiceImpl();
 	private VenueImpl venue = new VenueImpl();
 	private VenueRepositry venueRepositry = mock(MemoryVenueRepositry.class);
 

@@ -22,7 +22,7 @@ import com.yupeng.venue.models.SeatHold;
 import com.yupeng.venue.repositories.TikcetHoldRepository;
 import com.yupeng.venue.repositories.VenueRepositry;
 import com.yupeng.venue.services.TicketHoldService;
-import com.yupeng.venue.services.TicketLookupService;
+import com.yupeng.venue.services.SeatsLookupService;
 import com.yupeng.venue.timer.TicketHoldReleaseTask;
 
 @Service
@@ -34,7 +34,7 @@ public class TicketHoldServiceImpl implements TicketHoldService {
 	private Map<Integer, Timer> timerStorage = new HashMap<Integer, Timer>();
 
 	@Autowired
-	private TicketLookupService ticketLookupService;
+	private SeatsLookupService ticketLookupService;
 
 	@Autowired
 	private VenueRepositry venueRepositry;
@@ -135,7 +135,7 @@ public class TicketHoldServiceImpl implements TicketHoldService {
 		return 60 * 60 * 1000;
 	}
 
-	public void setTicketLookupService(TicketLookupService ticketLookupService) {
+	public void setTicketLookupService(SeatsLookupService ticketLookupService) {
 		this.ticketLookupService = ticketLookupService;
 	}
 

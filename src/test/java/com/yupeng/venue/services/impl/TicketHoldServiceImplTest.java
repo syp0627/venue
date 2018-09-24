@@ -40,7 +40,7 @@ public class TicketHoldServiceImplTest {
 	private SeatsLookupOneLineHelperImpl seatsLookupOneLineHelper = new SeatsLookupOneLineHelperImpl();
 	private SeatsLookupGroupHelperImpl seatsLookupGroupHelper = new SeatsLookupGroupHelperImpl();
 	private TicketHoldServiceImpl ticketHoldService = new TicketHoldServiceImpl();
-	private TicketLookupServiceImpl ticketLookupServiceImpl = new TicketLookupServiceImpl();
+	private SeatsLookupServiceImpl ticketLookupServiceImpl = new SeatsLookupServiceImpl();
 	private JmsTemplate jmsTemplate = mock(JmsTemplate.class);
 
 	@Before
