@@ -21,7 +21,7 @@ public class TicketHoldReleaseTask extends TimerTask {
 
 	private SeatHold seatHold;
 
-public TicketHoldReleaseTask(SeatHold seatHold, JmsTemplate jmsTemplate, VenueRepositry venueRepositry) {
+	public TicketHoldReleaseTask(SeatHold seatHold, JmsTemplate jmsTemplate, VenueRepositry venueRepositry) {
 		this.jmsTemplate = jmsTemplate;
 		this.venueRepositry = venueRepositry;
 		this.seatHold = seatHold;

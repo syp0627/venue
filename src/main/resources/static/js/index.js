@@ -33,6 +33,7 @@ IndexViewer.prototype = {
 			$("#seatsDiv").append(seatRow);
 		}
 		setInterval(this.update.bind(this), 1000);
+		setInterval(this.holdRequest.bind(this), 2000);
 	},
 	statusUpdateCallBack : function(response) {
 		let row = response.row;
@@ -44,6 +45,26 @@ IndexViewer.prototype = {
 						seats[i * column + j].status);
 			}
 		}
+	},
+	holdRequest : function() {
+		$.ajax({
+			url : "/hold/"+new Date().getTime()+"@mail.com/"+ (Math.floor(Math.random() * 10) + 1)  ,
+			type : 'GET',
+			dataType : 'json',
+			success : this.holdRequestCallBack.bind(this)
+		});
+	},
+	holdRequestCallBack : function(response){
+		setTimeout(this.reserveRequest.bind(this), (Math.floor(Math.random() * 25) + 1) * 1000, response);
+	},
+	reserveRequest: function(response){
+		$.ajax({
+			url : "/reserve/"+response.customerEmail+"/"+ response.seatHodeId ,
+			type : 'GET',
+			dataType : 'json',
+			success : function(){},
+			error : function(){}
+		});
 	}
 }
 

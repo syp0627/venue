@@ -1,0 +1,11 @@
+venue:
+  seats:
+    row : 9
+    column : 32
+
+#Second: 13, minutes: 12, hours: 10
+ticket:
+  hold:
+    expired:
+      unit : 13
+      duration : 30

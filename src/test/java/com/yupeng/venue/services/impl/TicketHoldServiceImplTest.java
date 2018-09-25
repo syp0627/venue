@@ -49,10 +49,10 @@ public class TicketHoldServiceImplTest {
 		ticketLookupHelper.setSeatsLookupOneLineHelper(seatsLookupOneLineHelper);
 		venue.setVenueRepositry(venueRepositry);
 
-		Seat[][] seats = new Seat[MemoryVenueRepositry.ROW][MemoryVenueRepositry.COLUMN];
-		for (int i = 0; i < MemoryVenueRepositry.ROW; i++) {
-			for (int j = 0; j < MemoryVenueRepositry.COLUMN; j++) {
-				seats[i][j] = new Seat(i * MemoryVenueRepositry.COLUMN + j);
+		Seat[][] seats = new Seat[9][32];
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 32; j++) {
+				seats[i][j] = new Seat(i * 32 + j);
 			}
 		}
 		when(venueRepositry.getSeats()).thenReturn(seats);
@@ -89,21 +89,21 @@ public class TicketHoldServiceImplTest {
 	public void testNoAvaliableSeat() {
 		ticketHoldService.holdSeats(venue.numSeatsAvailable() + 1, "aaa@gm.com");
 	}
-	
+
 	@Test(expected = TicketsHoldInfoNotValidedException.class)
 	public void testGetUnavaliableSeatHold() {
 		when(tikcetHoldRepository.get(Mockito.anyInt())).thenReturn(null);
 		ticketHoldService.getHoldSeats(0, "bbb@gm.com");
-		
+
 	}
-	
+
 	@Test(expected = TicketsHoldInfoNotValidedException.class)
 	public void testGetUnmatchEmailSeatHold() {
-		SeatHold seatHold = new SeatHold(0, "aaa@gm.com", Calendar.getInstance().getTimeInMillis()+ 1500, null);
+		SeatHold seatHold = new SeatHold(0, "aaa@gm.com", Calendar.getInstance().getTimeInMillis() + 1500, null);
 		when(tikcetHoldRepository.get(Mockito.anyInt())).thenReturn(seatHold);
 		ticketHoldService.getHoldSeats(0, "bbb@gm.com");
 	}
-	
+
 	@Test(expected = TicketsHoldExpiredException.class)
 	public void testGetExpiredSeatHold() {
 		SeatHold seatHold = new SeatHold(0, "aaa@gm.com", Calendar.getInstance().getTimeInMillis() - 1500, null);

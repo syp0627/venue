@@ -8,6 +8,7 @@ import java.util.Timer;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
@@ -21,15 +22,18 @@ import com.yupeng.venue.jms.SeatsStatusUpdateJmsMessage;
 import com.yupeng.venue.models.SeatHold;
 import com.yupeng.venue.repositories.TikcetHoldRepository;
 import com.yupeng.venue.repositories.VenueRepositry;
-import com.yupeng.venue.services.TicketHoldService;
 import com.yupeng.venue.services.SeatsLookupService;
+import com.yupeng.venue.services.TicketHoldService;
 import com.yupeng.venue.timer.TicketHoldReleaseTask;
 
 @Service
 public class TicketHoldServiceImpl implements TicketHoldService {
 
-	private int holdExpiredUnit = Calendar.SECOND;
-	private int holdExpiredDuration = 30;
+	@Value("${ticket.hold.expired.unit}")
+	private int holdExpiredUnit;
+	
+	@Value("${ticket.hold.expired.duration}")
+	private int holdExpiredDuration;
 
 	private Map<Integer, Timer> timerStorage = new HashMap<Integer, Timer>();
 

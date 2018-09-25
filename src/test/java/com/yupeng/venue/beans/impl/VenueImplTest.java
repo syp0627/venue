@@ -48,10 +48,10 @@ public class VenueImplTest {
 	public void setup() throws Exception {
 		venue.setVenueRepositry(venueRepositry);
 
-		Seat[][] seats = new Seat[MemoryVenueRepositry.ROW][MemoryVenueRepositry.COLUMN];
-		for (int i = 0; i < MemoryVenueRepositry.ROW; i++) {
-			for (int j = 0; j < MemoryVenueRepositry.COLUMN; j++) {
-				seats[i][j] = new Seat(i * MemoryVenueRepositry.COLUMN + j);
+		Seat[][] seats = new Seat[9][32];
+		for (int i = 0; i < 9; i++) {
+			for (int j = 0; j < 32; j++) {
+				seats[i][j] = new Seat(i * 32 + j);
 			}
 		}
 		when(venueRepositry.getSeats()).thenReturn(seats);
