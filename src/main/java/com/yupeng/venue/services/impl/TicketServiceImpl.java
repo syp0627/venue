@@ -13,7 +13,7 @@ import com.yupeng.venue.services.TicketService;
 public class TicketServiceImpl implements TicketService {
 
 	@Autowired
-	private SeatsLookupService ticketLookupService;
+	private SeatsLookupService seatsLookupService;
 
 	@Autowired
 	private TicketHoldService ticketHoldService;
@@ -23,7 +23,7 @@ public class TicketServiceImpl implements TicketService {
 
 	@Override
 	public int numSeatsAvailable() {
-		return ticketLookupService.numSeatsAvailable();
+		return seatsLookupService.numSeatsAvailable();
 	}
 
 	@Override
